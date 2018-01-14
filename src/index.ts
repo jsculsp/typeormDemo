@@ -2,8 +2,8 @@ import 'reflect-metadata';
 import { createConnection } from 'typeorm';
 import { User } from './entity/User';
 
-async function runDemo() {
-  createConnection().then(async (connection) => {
+function runDemo() {
+  return createConnection().then(async (connection) => {
     console.log('Inserting a new user into the database...');
     const user = new User();
     user.firstName = 'Timber';
@@ -21,19 +21,22 @@ async function runDemo() {
   }).catch(error => console.log(error));
 }
 
-async function test() {
-  createConnection().then(async (connection) => {
+function test() {
+  return createConnection().then(async (connection) => {
     let r = connection.getRepository(User);
     let user = await r.preload({
-      id: 1,
+      id: 6,
       firstName: 'Linmu',
     });
     console.log('user: ', user);
+    await connection.close();
   }).catch(err => console.log(err));
 }
 
-async function __main() {
-  test();
+function __main() {
+  runDemo().then(() => {
+    test();
+  });
 }
 
 __main();
